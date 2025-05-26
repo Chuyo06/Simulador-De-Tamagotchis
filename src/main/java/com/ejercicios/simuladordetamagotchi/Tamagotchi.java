@@ -92,6 +92,9 @@ abstract class Tamagotchi implements TamagotchiActions{
     
     //Metodo abstracto
     public abstract  void comportamientoEspecifico();
-    
-    
+
+
+    public String obtenerEstadoAnimo() {
+        return null;
+    }
 }

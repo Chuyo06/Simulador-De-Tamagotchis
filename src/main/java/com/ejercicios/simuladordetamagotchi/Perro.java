@@ -21,55 +21,55 @@ public class Perro extends Tamagotchi implements TamagotchiActions {
 
     //Metodo para alimentar al tamagotchi
        @Override
+       //Se usan la clase Math.max y Math.min, con la cual
+       //se "limita" a un rango de datos
     public void alimentar(String tipoAlimento) {
+           switch (tipoAlimento.toLowerCase()) {
+               case "croquetas" -> {
+                   hambre = Math.min(100, hambre + 15);
+                   energia = Math.min(100, energia + 5);
+               }
+               case "sobresito" -> {
+                   hambre = Math.min(100, hambre + 20);
+                   energia = Math.min(100, energia + 10);
+               }
+               case "galleta" -> {
+                   hambre = Math.min(100, hambre + 5);
+                   felicidad = Math.min(100, felicidad + 10);
+               }
 
-        //Se usan la clase Math.max y Math.min, con la cual 
-        //se "limita" a un rango de datos
-        if(tipoAlimento.toLowerCase().equals("croquetas"))
-        {
-            hambre = Math.min(100, hambre + 15);//Sumara 15 pero no pasara del 100
-        }
-        
-        if(tipoAlimento.toLowerCase().equals("sobresito"))
-        {
-            hambre = Math.min(100, hambre + 20);//Sumara 15 pero no pasara del 100
-        }
-        
-        if(tipoAlimento.toLowerCase().equals("scooby-galleta"))
-        {
-            hambre = Math.min(100, hambre + 5);//Sumara 15 pero no pasara del 100
-        }
- 
-    }
+           }
+       }
+
 
     @Override
     public void jugar(String tipoJuego) {
- //Se usan la clase Math.max y Math.min, con la cual 
+        //Se usan la clase Math.max y Math.min, con la cual
         //se "limita" a un rango de datos
-        if(tipoJuego.toLowerCase().equals("pasear"))
-        {
-            energia = Math.max(0, energia - 25);
-            felicidad = Math.min(100, felicidad + 20);
-        }
-        
-        if(tipoJuego.toLowerCase().equals("pelota"))
-        {
-            energia = Math.max(0, energia - 10);
-            felicidad = Math.min(100, felicidad + 15);        
-        }
-        
-        if(tipoJuego.toLowerCase().equals("cuerda"))
-        {
-            energia = Math.max(0, energia - 5);
-            felicidad = Math.min(100, felicidad + 10);  
+        switch (tipoJuego.toLowerCase()) {
+            case "pasear" -> {
+                energia = Math.max(0, energia - 25);
+                felicidad = Math.min(100, felicidad + 20);
+            }
+
+            case "pelota" -> {
+                energia = Math.max(0, energia - 10);
+                felicidad = Math.min(100, felicidad + 15);
+            }
+
+            case "cuerda" -> {
+                energia = Math.max(0, energia - 5);
+                felicidad = Math.min(100, felicidad + 10);
+            }
         }
     }
-    
-    
+    public void dormir() {
+        this.estaDormido = true;
+        this.energia = Math.min(100, this.energia +20);
+    }
+
     @Override
     public void comportamientoEspecifico() {
-        
+        System.out.println (nombre + " esta ladre y ladre persiguiendo su cola");
     }
-   
- 
 }

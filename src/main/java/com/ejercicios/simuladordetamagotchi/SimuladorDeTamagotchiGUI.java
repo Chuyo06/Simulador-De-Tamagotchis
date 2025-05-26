@@ -80,7 +80,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame{
         
         //Agregar paneles al panel principal
         panelPrincipal.add(scrollPane , BorderLayout.CENTER);
-        panelPrincipal.add(panelDerecho , BorderLayout.CENTER);
+        panelPrincipal.add(panelDerecho , BorderLayout.EAST);
         
         add(panelPrincipal);
         
@@ -94,12 +94,23 @@ public class SimuladorDeTamagotchiGUI extends JFrame{
         panel.setBorder(BorderFactory.createTitledBorder("Crear Nuevo Tamagotchi"));
         
         // Titulo del panel de crear tamagotchis
-        JLabel titleLabel = new JLabel("Crea tu Tamagotchi!!!!!!!");
+        JLabel titleLabel = new JLabel("Crea tu Tamagotchi!!!");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         // botones para crear los diferentes tipos de tama
         JButton btnPerro = estiloBoton("Crear Perro", new Color(255, 200, 150));
+        btnPerro.addActionListener(e -> {
+            String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del peerro:");
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                Perro nuevoPerro = new Perro(nombre);
+                tamagotchisPanel.add(nuevoPerro); //guarda en la lista
+                JPanel panelVisual = crearPanelTamagotchi(nuevoPerro); // la visualizacion
+                panelIzquierdo.add(panelVisual);
+                panelIzquierdo.revalidate();
+                panelIzquierdo.repaint();
+            }
+        });
         JButton btnGato = estiloBoton("Crear Gato", new Color(200, 255, 200));
         JButton btnMuneca = estiloBoton("Crear Muñeca", new Color(255, 200, 255));
         JButton btnCuyo = estiloBoton("Crear Cuyo", new Color(200, 200, 255));
@@ -123,8 +134,44 @@ public class SimuladorDeTamagotchiGUI extends JFrame{
         
         return panel;
     }
-    
-    
+
+    private JPanel crearPanelTamagotchi(Tamagotchi tamagotchi) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setPreferredSize(new Dimension(750, 120));
+        panel.setBorder(BorderFactory.createTitledBorder(tamagotchi.getNombre()));
+        JLabel estado = new JLabel ("Estado: " + tamagotchi.obtenerEstadoAnimo());
+
+        JButton btnAlimentar = new JButton("Alimentar");
+        btnAlimentar.addActionListener(e -> {
+            String alimento = JOptionPane.showInputDialog(this, "Que alimento le quieres dar? " +
+                    "\n 1-. croquetas \n 2-. sobresito \n 3-. galleta");
+            tamagotchi.alimentar(alimento);
+            estado.setText("Estado: " + tamagotchi.obtenerEstadoAnimo());
+        });
+        JButton btnJugar = new JButton("Jugar");
+        btnJugar.addActionListener(e -> {
+            String juego = JOptionPane.showInputDialog(this, "Que quieres jugar con el? " +
+                    "\n 1-. pasear \n 2-. pelota \n 3-. cuerda");
+            tamagotchi.jugar(juego);
+            estado.setText("Estado: " + tamagotchi.obtenerEstadoAnimo());
+        });
+        JButton btnDormir = new JButton("Dormir");
+        btnDormir.addActionListener(e -> {
+            tamagotchi.comportamientoEspecifico();
+        });
+        JButton btnComportamiento = new JButton("Especial");
+        btnComportamiento.addActionListener(e -> {
+            tamagotchi.comportamientoEspecifico();
+        });
+        panel.add(estado);
+        panel.add(btnAlimentar);
+        panel.add(btnJugar);
+        panel.add(btnDormir);
+        panel.add(btnComportamiento);
+        return panel;
+    }
+
+
     //Metodo para dar color y el texto al boton
      private JButton estiloBoton(String text, Color color) {
         JButton button = new JButton(text);
