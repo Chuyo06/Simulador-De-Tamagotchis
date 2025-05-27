@@ -174,6 +174,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
                 //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
                 panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
+
                 panelIzquierdo.add(panelVisual);
                 panelIzquierdo.revalidate();
                 panelIzquierdo.repaint();
@@ -196,6 +197,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 panelIzquierdo.repaint();
             }
         });
+
 
         // Acciones de los botones donde se utilizara Action Listeners
         // se agregan al panel los diferente botones para poner en vertical
@@ -272,24 +274,46 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
         JButton btnAlimentar = estiloBoton("Alimentar", new Color(255, 200, 150), 110, 40);
         btnAlimentar.addActionListener(e -> {
+            String[] opciones;
             if (tamagotchi instanceof Perro) {
-                String[] opciones = {"Croquetas", "Sobresito", "Galleta"};
-                JComboBox<String> combo = new JComboBox<>(opciones);
-                int seleccion = JOptionPane.showConfirmDialog(this, combo, "Selecciona alimento", JOptionPane.OK_CANCEL_OPTION);
-                if (seleccion == JOptionPane.OK_OPTION) {
-                    String alimento = (String) combo.getSelectedItem();
-                    tamagotchi.alimentar(alimento);
-                    actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
-                    actualizarImagenTamagotchi(labelImagen, tamagotchi);
-                }
+                opciones = new String[]{"Croquetas", "Sobresito", "Galleta"};
+            } else if (tamagotchi instanceof Gato) {
+                opciones = new String[]{"Croquetas", "Pescado", "Whiskas"};
+            } else if (tamagotchi instanceof Cuyo) {
+                opciones = new String[]{"Zanahoria", "Heno", "Lechuga"};
+            } else if (tamagotchi instanceof Muñeca) {
+                opciones = new String[]{"Té", "Tacos", "Café"};
+            } else {
+                opciones = new String[]{"No hay alimento"};
+            }
+
+            JComboBox<String> combo = new JComboBox<>(opciones);
+            int seleccion = JOptionPane.showConfirmDialog(this, combo, "Selecciona alimento", JOptionPane.OK_CANCEL_OPTION);
+            if (seleccion == JOptionPane.OK_OPTION) {
+                String alimento = (String) combo.getSelectedItem();
+                tamagotchi.alimentar(alimento);
+                actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+                actualizarImagenTamagotchi(labelImagen, tamagotchi);
             }
         });
 
         JButton btnJugar = estiloBoton("Jugar", new Color(255, 200, 150), 110, 40);
         btnJugar.addActionListener(e -> {
+            String[] opciones;
+
             if (tamagotchi instanceof Perro) {
-                String[] juegos = {"Pasear", "Pelota", "Cuerda"};
-                JComboBox<String> combo = new JComboBox<>(juegos);
+                opciones = new String[]{"Pasear", "Pelota", "Cuerda"};
+            } else if (tamagotchi instanceof Gato) {
+                opciones = new String[]{"Estambre", "Pelota", "Caña de pescar"};
+            } else if (tamagotchi instanceof Cuyo) {
+                opciones = new String[]{"Pelotita de heno", "Esconderse en su tunel", "Correr en su rueda"};
+            } else if (tamagotchi instanceof Muñeca) {
+                opciones = new String[]{"iPad", "Dibujar", "Leer"};
+            } else {
+                opciones = new String[]{"No hay que jugar"};
+            }
+
+                JComboBox<String> combo = new JComboBox<>(opciones);
                 int seleccion = JOptionPane.showConfirmDialog(this, combo, "¿Que quieres jugar?", JOptionPane.OK_CANCEL_OPTION);
                 if (seleccion == JOptionPane.OK_OPTION) {
                     String juego = (String) combo.getSelectedItem();
@@ -297,7 +321,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                     actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
                     actualizarImagenTamagotchi(labelImagen, tamagotchi);
                 }
-            }
+
         });
 
         JButton btnDormir = estiloBoton("Dormir", new Color(255, 200, 150), 110, 40);

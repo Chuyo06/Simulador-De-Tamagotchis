@@ -33,7 +33,7 @@ public class Muñeca extends Tamagotchi implements TamagotchiActions {
                 hambre = Math.min(100, hambre + 20);
                 energia = Math.min(100, energia + 10);
             }
-            case "Galletas" -> {
+            case "Café" -> {
                 hambre = Math.min(100, hambre + 5);
                 felicidad = Math.min(100, felicidad + 10);
             }

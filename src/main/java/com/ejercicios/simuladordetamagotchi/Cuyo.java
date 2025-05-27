@@ -29,7 +29,7 @@ public class Cuyo extends Tamagotchi implements TamagotchiActions {
                 hambre = Math.min(100, hambre + 15);
                 energia = Math.min(100, energia + 5);
             }
-            case "Heno" -> {
+            case "heno" -> {
                 hambre = Math.min(100, hambre + 20);
                 energia = Math.min(100, energia + 10);
             }
