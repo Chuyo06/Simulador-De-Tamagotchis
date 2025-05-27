@@ -18,22 +18,7 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.Timer;
+import javax.swing.*;
 
 /**
  *
@@ -42,7 +27,7 @@ import javax.swing.Timer;
 //Usaremos un Frame para mostrar todo
 public class SimuladorDeTamagotchiGUI extends JFrame {
 
-    //Maps para guardar las imagenes de los tamagotchis 
+    //Maps para guardar las imagenes de los tamagotchis
     private Map<Tamagotchi, JLabel> imagenesTamagotchi = new HashMap<>();
     private Map<Tamagotchi, JLabel> estadosTamagotchi = new HashMap<>();
 
@@ -76,10 +61,10 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                         actualizarImagenTamagotchi(labelImg, t);
                         actualizarEstadoAnimoDeTamagotchi(labelEstado, t);
                     }
-                        
+
                     //Aqui obtienes las barras correspondientes del map en donde estan guardadas
-                    JProgressBar[] barras = barrasTamagotchi.get(t);  
-                    //Si existen valores en el map los actualiza 
+                    JProgressBar[] barras = barrasTamagotchi.get(t);
+                    //Si existen valores en el map los actualiza
                     if (barras != null) {
                         barras[0].setValue(t.getHambre());//Barra de hambre
                         barras[1].setValue(t.getEnergia());//Barra de energia
@@ -159,9 +144,58 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 panelIzquierdo.repaint();
             }
         });
+
         JButton btnGato = estiloBoton("Crear Gato", new Color(200, 255, 200), 250, 40);
+        btnGato.addActionListener(e -> {
+            String nombre = JOptionPane.showInputDialog(this, "Ingresa el nombre del gato:");
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                Gato nuevoGato = new Gato(nombre);
+                tamagotchisPanel.add(nuevoGato); //guarda en la lista
+                nuevoGato.iniciarCicloDeVida();//se inicia el ciclo por hilo
+                JPanel panelVisual = crearPanelTamagotchi(nuevoGato); // la visualizacion
+                panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
+                //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
+                panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
+
+                panelIzquierdo.add(panelVisual);
+                panelIzquierdo.revalidate();
+                panelIzquierdo.repaint();
+            }
+        });
+
         JButton btnMuneca = estiloBoton("Crear Muñeca", new Color(255, 200, 255), 250, 40);
+        btnMuneca.addActionListener(e -> {
+            String nombre = JOptionPane.showInputDialog(this, "Ingresa el nombre de tu muñeca:");
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                Muñeca nuevoMuñeca = new Muñeca(nombre);
+                tamagotchisPanel.add(nuevoMuñeca); //guarda en la lista
+                nuevoMuñeca.iniciarCicloDeVida();//se inicia el ciclo por hilo
+                JPanel panelVisual = crearPanelTamagotchi(nuevoMuñeca); // la visualizacion
+                panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
+                //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
+                panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
+                panelIzquierdo.add(panelVisual);
+                panelIzquierdo.revalidate();
+                panelIzquierdo.repaint();
+            }
+        });
+
         JButton btnCuyo = estiloBoton("Crear Cuyo", new Color(200, 200, 255), 250, 40);
+        btnCuyo.addActionListener(e -> {
+            String nombre = JOptionPane.showInputDialog(this, "Ingresa el nombre del cuyo:");
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                Cuyo nuevoCuyo = new Cuyo(nombre);
+                tamagotchisPanel.add(nuevoCuyo); //guarda en la lista
+                nuevoCuyo.iniciarCicloDeVida();//se inicia el ciclo por hilo
+                JPanel panelVisual = crearPanelTamagotchi(nuevoCuyo); // la visualizacion
+                panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
+                //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
+                panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
+                panelIzquierdo.add(panelVisual);
+                panelIzquierdo.revalidate();
+                panelIzquierdo.repaint();
+            }
+        });
 
         // Acciones de los botones donde se utilizara Action Listeners
         // se agregan al panel los diferente botones para poner en vertical
@@ -182,7 +216,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
     private JPanel crearPanelTamagotchi(Tamagotchi tamagotchi) {
 
-        //Panel de diferentes 
+        //Panel de diferentes
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setMaximumSize(new Dimension(750, 230));
         panel.setPreferredSize(new Dimension(750, 230));
@@ -193,7 +227,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
         //Actualizar la imagen del tamgagotchi
         actualizarImagenTamagotchi(labelImagen, tamagotchi);
         imagenesTamagotchi.put(tamagotchi, labelImagen);//guardar las imagenes del tamagotchi en el Map
-        
+
         // Barras que va mostrar como estan los estados del tamagotchi
         JProgressBar barraHambre = new JProgressBar(0, 100);
         JProgressBar barraEnergia = new JProgressBar(0, 100);
@@ -238,30 +272,58 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
         JButton btnAlimentar = estiloBoton("Alimentar", new Color(255, 200, 150), 110, 40);
         btnAlimentar.addActionListener(e -> {
-            String alimento = JOptionPane.showInputDialog(this, "¿Qué alimento le quieres dar?\n1. Croquetas\n2. Sobrecito\n3. Galleta");
-            tamagotchi.alimentar(alimento);
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
-            actualizarImagenTamagotchi(labelImagen, tamagotchi);
+            if (tamagotchi instanceof Perro) {
+                String[] opciones = {"Croquetas", "Sobresito", "Galleta"};
+                JComboBox<String> combo = new JComboBox<>(opciones);
+                int seleccion = JOptionPane.showConfirmDialog(this, combo, "Selecciona alimento", JOptionPane.OK_CANCEL_OPTION);
+                if (seleccion == JOptionPane.OK_OPTION) {
+                    String alimento = (String) combo.getSelectedItem();
+                    tamagotchi.alimentar(alimento);
+                    actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+                    actualizarImagenTamagotchi(labelImagen, tamagotchi);
+                }
+            }
         });
 
         JButton btnJugar = estiloBoton("Jugar", new Color(255, 200, 150), 110, 40);
         btnJugar.addActionListener(e -> {
-            String juego = JOptionPane.showInputDialog(this, "¿A qué quieres jugar con él?\n1. Pasear\n2. Pelota\n3. Cuerda");
-            tamagotchi.jugar(juego);
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
-            actualizarImagenTamagotchi(labelImagen, tamagotchi);
+            if (tamagotchi instanceof Perro) {
+                String[] juegos = {"Pasear", "Pelota", "Cuerda"};
+                JComboBox<String> combo = new JComboBox<>(juegos);
+                int seleccion = JOptionPane.showConfirmDialog(this, combo, "¿Que quieres jugar?", JOptionPane.OK_CANCEL_OPTION);
+                if (seleccion == JOptionPane.OK_OPTION) {
+                    String juego = (String) combo.getSelectedItem();
+                    tamagotchi.jugar(juego);
+                    actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+                    actualizarImagenTamagotchi(labelImagen, tamagotchi);
+                }
+            }
         });
 
         JButton btnDormir = estiloBoton("Dormir", new Color(255, 200, 150), 110, 40);
         btnDormir.addActionListener(e -> {
+            tamagotchi.dormir();
+            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            actualizarImagenTamagotchi(labelImagen, tamagotchi);
+        });
+
+        JButton btnComportamiento = estiloBoton("Especifico", new Color(255, 200, 150), 130, 40);
+        btnComportamiento.addActionListener(e -> {
             tamagotchi.comportamientoEspecifico();
             actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
 
-        JButton btnComportamiento = estiloBoton("Comportamiento", new Color(255, 200, 150), 130, 40);
-        btnComportamiento.addActionListener(e -> {
-            tamagotchi.comportamientoEspecifico();
+        JButton btnComportamientoDos = estiloBoton("Especifico 2", new Color(255, 200, 150), 130, 40);
+        btnComportamientoDos.addActionListener(e -> {
+            tamagotchi.comportamientoEspecificoDos();
+            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            actualizarImagenTamagotchi(labelImagen, tamagotchi);
+        });
+
+        JButton btnComportamientoTres = estiloBoton("Especifico 3", new Color(255, 200, 150), 130, 40);
+        btnComportamientoTres.addActionListener(e -> {
+            tamagotchi.comportamientoEspecificoTres();
             actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
@@ -270,12 +332,14 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
         panelBotones.add(btnJugar);
         panelBotones.add(btnDormir);
         panelBotones.add(btnComportamiento);
+        panelBotones.add(btnComportamientoDos);
+        panelBotones.add(btnComportamientoTres);
 
         actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
         //Panel que va mostrar estado
         JPanel panelEstado = new JPanel();
         panelEstado.add(labelEstado);
-        
+
         //Se agregan los paneles de estado y barras del al central
         panelCentral.add(panelEstado, BorderLayout.SOUTH);
         panelCentral.add(panelBarras, BorderLayout.NORTH);
@@ -308,7 +372,7 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
             labelImagen.setText(estado);
 
         } catch (Exception e) {
-            labelImagen.setText("Texto no encintrado");
+            labelImagen.setText("Texto no encontrado");
             System.err.println("Error cargar Texto " + e.getMessage());
         }
     }

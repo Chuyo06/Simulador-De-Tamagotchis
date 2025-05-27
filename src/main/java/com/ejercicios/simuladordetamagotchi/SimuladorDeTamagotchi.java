@@ -14,13 +14,13 @@ import javax.swing.UIManager;
 public class SimuladorDeTamagotchi {
 
     public static void main(String[] args) throws InterruptedException {
-        
 
-       SimuladorDeTamagotchiGUI juego  = new SimuladorDeTamagotchiGUI();
-       
-       
+
+        SimuladorDeTamagotchiGUI juego  = new SimuladorDeTamagotchiGUI();
+
+
         juego.setVisible(true);
-}
-    
+    }
+
 }
 

@@ -70,6 +70,17 @@ public class Perro extends Tamagotchi implements TamagotchiActions {
 
     @Override
     public void comportamientoEspecifico() {
-        System.out.println (nombre + " esta ladre y ladre persiguiendo su cola");
+        System.out.println (nombre + " El perro esta ladre y ladre");
     }
+
+    @Override
+    public void comportamientoEspecificoDos() {
+        System.out.println (nombre + " El perro esta jugando persiguiendo su cola");
+    }
+
+    @Override
+    public void comportamientoEspecificoTres() {
+        System.out.println (nombre + " El perro esta oliendo comida");
+    }
+
 }
