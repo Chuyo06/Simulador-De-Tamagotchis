@@ -13,7 +13,6 @@ import java.util.logging.Logger;
  */
 public class Muñeca extends Tamagotchi implements TamagotchiActions {
 
-
     public Muñeca(String nombre) {
         super(nombre);
 
@@ -25,22 +24,21 @@ public class Muñeca extends Tamagotchi implements TamagotchiActions {
     //se "limita" a un rango de datos
     public void alimentar(String tipoAlimento) {
         switch (tipoAlimento.toLowerCase()) {
-            case "Té" -> {
+            case "sabritas" -> {
                 hambre = Math.min(100, hambre + 15);
                 energia = Math.min(100, energia + 5);
             }
-            case "Tacos" -> {
+            case "tacos" -> {
                 hambre = Math.min(100, hambre + 20);
                 energia = Math.min(100, energia + 10);
             }
-            case "Café" -> {
+            case "brownie" -> {
                 hambre = Math.min(100, hambre + 5);
                 felicidad = Math.min(100, felicidad + 10);
             }
 
         }
     }
-
 
     @Override
     public void jugar(String tipoJuego) {
@@ -52,34 +50,35 @@ public class Muñeca extends Tamagotchi implements TamagotchiActions {
                 felicidad = Math.min(100, felicidad + 20);
             }
 
-            case "Dibujar" -> {
+            case "dibujar" -> {
                 energia = Math.max(0, energia - 10);
                 felicidad = Math.min(100, felicidad + 15);
             }
 
-            case "Leer" -> {
+            case "leer" -> {
                 energia = Math.max(0, energia - 5);
                 felicidad = Math.min(100, felicidad + 10);
             }
         }
     }
+
     public void dormir() {
         this.estaDormido = true;
-        this.energia = Math.min(100, this.energia +20);
+        this.energia = Math.min(100, this.energia + 20);
     }
 
     @Override
-    public void comportamientoEspecifico() {
-        System.out.println (nombre + "La muñeca esta feliz");
+    public String comportamientoEspecifico() {
+        return " esta cantando";
     }
 
     @Override
-    public void comportamientoEspecificoDos() {
-        System.out.println (nombre + "La muñeca se siente aburrida");
+    public String comportamientoEspecificoDos() {
+        return " esta jugando con otras muñeca";
     }
 
     @Override
-    public void comportamientoEspecificoTres() {
-        System.out.println (nombre + "La muñeca tiene ganas de llorar");
+    public String comportamientoEspecificoTres() {
+        return " esta perdida";
     }
 }

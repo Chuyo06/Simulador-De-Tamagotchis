@@ -13,7 +13,6 @@ import java.util.logging.Logger;
  */
 public class Gato extends Tamagotchi implements TamagotchiActions {
 
-
     public Gato(String nombre) {
         super(nombre);
 
@@ -41,7 +40,6 @@ public class Gato extends Tamagotchi implements TamagotchiActions {
         }
     }
 
-
     @Override
     public void jugar(String tipoJuego) {
         //Se usan la clase Math.max y Math.min, con la cual
@@ -63,23 +61,24 @@ public class Gato extends Tamagotchi implements TamagotchiActions {
             }
         }
     }
+
     public void dormir() {
         this.estaDormido = true;
-        this.energia = Math.min(100, this.energia +20);
+        this.energia = Math.min(100, this.energia + 20);
     }
 
     @Override
-    public void comportamientoEspecifico() {
-        System.out.println (nombre + "El gato esta ronroneando");
+    public String comportamientoEspecifico() {
+        return " esta ronroneando";
     }
 
     @Override
-    public void comportamientoEspecificoDos() {
-        System.out.println (nombre + "El gato esta maullando");
+    public String comportamientoEspecificoDos() {
+        return " esta maullando";
     }
 
     @Override
-    public void comportamientoEspecificoTres() {
-       System.out.println (nombre + "El gato esta dormido boca arriba");
+    public String comportamientoEspecificoTres() {
+        return " esta dormido boca arriba";
     }
 }

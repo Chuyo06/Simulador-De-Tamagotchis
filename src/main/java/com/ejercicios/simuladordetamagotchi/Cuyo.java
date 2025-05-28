@@ -13,7 +13,6 @@ import java.util.logging.Logger;
  */
 public class Cuyo extends Tamagotchi implements TamagotchiActions {
 
-
     public Cuyo(String nombre) {
         super(nombre);
 
@@ -41,13 +40,12 @@ public class Cuyo extends Tamagotchi implements TamagotchiActions {
         }
     }
 
-
     @Override
     public void jugar(String tipoJuego) {
         //Se usan la clase Math.max y Math.min, con la cual
         //se "limita" a un rango de datos
         switch (tipoJuego.toLowerCase()) {
-            case "pelota de heno" -> {
+            case "pelotita de heno" -> {
                 energia = Math.max(0, energia - 25);
                 felicidad = Math.min(100, felicidad + 20);
             }
@@ -63,23 +61,24 @@ public class Cuyo extends Tamagotchi implements TamagotchiActions {
             }
         }
     }
+
     public void dormir() {
         this.estaDormido = true;
-        this.energia = Math.min(100, this.energia +20);
+        this.energia = Math.min(100, this.energia + 20);
     }
 
     @Override
-    public void comportamientoEspecifico() {
-        System.out.println (nombre + "El cuyo hace cuy cuy");
+    public String comportamientoEspecifico() {
+        return " esta haciendo cuy cuy";
     }
 
     @Override
-    public void comportamientoEspecificoDos() {
-        System.out.println (nombre + "El cuyo esta roendo la madera");
+    public String comportamientoEspecificoDos() {
+        return " esta roendo la madera";
     }
 
     @Override
-    public void comportamientoEspecificoTres() {
-        System.out.println (nombre + "El cuyo esta escondido");
+    public String comportamientoEspecificoTres() {
+        return " esta escondido";
     }
 }

@@ -27,12 +27,19 @@ import javax.swing.*;
 //Usaremos un Frame para mostrar todo
 public class SimuladorDeTamagotchiGUI extends JFrame {
 
+    //Map que guarda si existe un mensajeTemporalActivo de los que
+    //se accionan cuando se presiona un boton
+    private Map<Tamagotchi, Boolean> mensajeTemporalActivo = new HashMap<>();
+
     //Maps para guardar las imagenes de los tamagotchis
     private Map<Tamagotchi, JLabel> imagenesTamagotchi = new HashMap<>();
     private Map<Tamagotchi, JLabel> estadosTamagotchi = new HashMap<>();
 
     //Guardar en un map tambien las barras
     private Map<Tamagotchi, JProgressBar[]> barrasTamagotchi = new HashMap<>();
+
+    //Guardar en un map todos los botones de los tamagotchis
+    private Map<Tamagotchi, ArrayList<JButton>> botonesTamagotchi = new HashMap<>();
 
     //Paneles necesarios
     private JPanel panelPrincipal;//Panel que va contenr todo
@@ -47,19 +54,25 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
     public SimuladorDeTamagotchiGUI() {
         inicializarGUI();
 
-        //creamos un temporizador para que se ejecute cada 1 segundo
-        Timer timer = new Timer(1000, e -> {
+        //creamos un temporizador para que se ejecute cada 1 segundo 
+        //para actualizar el tablero, y se ejecuta que pasa .start
+        //opero cuando se crea una instancia de este GUI inicia este Timer
+        
+        Timer timer = new Timer(100, e -> {
 
             // en este forEach, se recorren los paneles para ver que tamagotchis se han creado
             for (Tamagotchi t : tamagotchisPanel) {
                 //Si el tamagotchi esta vivo va tomar la imagen y el estado del tamgotchi
                 //y la va actualizar ene el panel
-                if (t.isEstaVivo()) {
-                    JLabel labelImg = imagenesTamagotchi.get(t);
-                    JLabel labelEstado = estadosTamagotchi.get(t);
-                    if (labelImg != null && labelEstado != null) {
-                        actualizarImagenTamagotchi(labelImg, t);
-                        actualizarEstadoAnimoDeTamagotchi(labelEstado, t);
+
+                JLabel labelImg = imagenesTamagotchi.get(t);
+                JLabel labelEstado = estadosTamagotchi.get(t);
+                if (labelImg != null && labelEstado != null) {
+                    actualizarImagenTamagotchi(labelImg, t);
+                    //Se envia un mensaje null para que no muestre mensaje extra 
+                    //pero solo se actualiza si no hay mnesajes activos en el Mao de los mensajes 
+                    if (!mensajeTemporalActivo.getOrDefault(t, false)) {
+                        actualizarEstadoAnimoDeTamagotchi(labelEstado, t, null);
                     }
 
                     //Aqui obtienes las barras correspondientes del map en donde estan guardadas
@@ -69,6 +82,18 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                         barras[0].setValue(t.getHambre());//Barra de hambre
                         barras[1].setValue(t.getEnergia());//Barra de energia
                         barras[2].setValue(t.getFelicidad());//Barra de felicidad
+                    }
+
+                    //Si el tamagotchi esta muerto, no te dejara interactuar con el mediante los botones
+                    if (!t.isEstaVivo()) {
+                        ArrayList<JButton> botones = botonesTamagotchi.get(t);
+                        if (botones != null) {
+                            for (JButton b : botones) {
+                                if (b.isEnabled()) {
+                                    b.setEnabled(false); // se desactivan solo si estyaba activadao
+                                }
+                            }
+                        }
                     }
 
                 }
@@ -172,7 +197,6 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 nuevoMuñeca.iniciarCicloDeVida();//se inicia el ciclo por hilo
                 JPanel panelVisual = crearPanelTamagotchi(nuevoMuñeca); // la visualizacion
                 panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
-                //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
                 panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
 
                 panelIzquierdo.add(panelVisual);
@@ -190,14 +214,12 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 nuevoCuyo.iniciarCicloDeVida();//se inicia el ciclo por hilo
                 JPanel panelVisual = crearPanelTamagotchi(nuevoCuyo); // la visualizacion
                 panelVisual.setAlignmentX(Component.LEFT_ALIGNMENT);
-                //panelIzquierdo.add(panelVisual, 0); // Agrega al principio
                 panelIzquierdo.add(Box.createRigidArea(new Dimension(0, 10))); // espacio entre los paneles
                 panelIzquierdo.add(panelVisual);
                 panelIzquierdo.revalidate();
                 panelIzquierdo.repaint();
             }
         });
-
 
         // Acciones de los botones donde se utilizara Action Listeners
         // se agregan al panel los diferente botones para poner en vertical
@@ -268,12 +290,20 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
         // Estado de animo
         JLabel labelEstado = new JLabel();
+        labelEstado.setFont(new Font("Arial", Font.BOLD, 18)); // Cambiar tamanio a la letra
         //Actualizar el estado de animo del tamagotchi
-        actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+        //Se envia un mensaje null para que no muestre mensaje extra
+
+        actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi, null);
         estadosTamagotchi.put(tamagotchi, labelEstado); //Se agregan al Map para despues usarlas
 
-        JButton btnAlimentar = estiloBoton("Alimentar", new Color(255, 200, 150), 110, 40);
+        JButton btnAlimentar = estiloBoton("Alimentar", new Color(249, 241, 123), 110, 40);
         btnAlimentar.addActionListener(e -> {
+            //En caso de que este muerto o este dormido no puede acceder a los esatdos ni modificarlos
+            if (!tamagotchi.isEstaVivo() || tamagotchi.isEstaDormido()) {
+                return;
+            }
+
             String[] opciones;
             if (tamagotchi instanceof Perro) {
                 opciones = new String[]{"Croquetas", "Sobresito", "Galleta"};
@@ -282,23 +312,30 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
             } else if (tamagotchi instanceof Cuyo) {
                 opciones = new String[]{"Zanahoria", "Heno", "Lechuga"};
             } else if (tamagotchi instanceof Muñeca) {
-                opciones = new String[]{"Té", "Tacos", "Café"};
+                opciones = new String[]{"Sabritas", "Tacos", "Brownie"};
             } else {
                 opciones = new String[]{"No hay alimento"};
             }
 
+            //JcomoboBox para elegir el alimento
             JComboBox<String> combo = new JComboBox<>(opciones);
             int seleccion = JOptionPane.showConfirmDialog(this, combo, "Selecciona alimento", JOptionPane.OK_CANCEL_OPTION);
             if (seleccion == JOptionPane.OK_OPTION) {
                 String alimento = (String) combo.getSelectedItem();
                 tamagotchi.alimentar(alimento);
-                actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+                //Se envia un mensaje null para que no muestre mensaje extra
+
+                mostrarMensajeTemporal(labelEstado, tamagotchi, "comio " + alimento);
                 actualizarImagenTamagotchi(labelImagen, tamagotchi);
             }
         });
 
-        JButton btnJugar = estiloBoton("Jugar", new Color(255, 200, 150), 110, 40);
+        JButton btnJugar = estiloBoton("Jugar", new Color(249, 241, 123), 110, 40);
         btnJugar.addActionListener(e -> {
+            if (!tamagotchi.isEstaVivo() || tamagotchi.isEstaDormido()) {
+                return;
+            }
+
             String[] opciones;
 
             if (tamagotchi instanceof Perro) {
@@ -313,53 +350,83 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
                 opciones = new String[]{"No hay que jugar"};
             }
 
-                JComboBox<String> combo = new JComboBox<>(opciones);
-                int seleccion = JOptionPane.showConfirmDialog(this, combo, "¿Que quieres jugar?", JOptionPane.OK_CANCEL_OPTION);
-                if (seleccion == JOptionPane.OK_OPTION) {
-                    String juego = (String) combo.getSelectedItem();
-                    tamagotchi.jugar(juego);
-                    actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
-                    actualizarImagenTamagotchi(labelImagen, tamagotchi);
-                }
+            JComboBox<String> combo = new JComboBox<>(opciones);
+            int seleccion = JOptionPane.showConfirmDialog(this, combo, "¿Que quieres jugar?", JOptionPane.OK_CANCEL_OPTION);
+            if (seleccion == JOptionPane.OK_OPTION) {
+                String juego = (String) combo.getSelectedItem();
+                tamagotchi.jugar(juego);
+                mostrarMensajeTemporal(labelEstado, tamagotchi, "jugo con " + juego);
+                actualizarImagenTamagotchi(labelImagen, tamagotchi);
+            }
 
         });
 
-        JButton btnDormir = estiloBoton("Dormir", new Color(255, 200, 150), 110, 40);
+        JButton btnDormir = estiloBoton("Dormir", new Color(249, 241, 123), 110, 40);
         btnDormir.addActionListener(e -> {
+            if (!tamagotchi.estaVivo) {
+                return;//Si el tamagotchi murio no se modificaran sus estados
+            }
             tamagotchi.dormir();
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi, " esta durmiendo");
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
 
-        JButton btnComportamiento = estiloBoton("Especifico", new Color(255, 200, 150), 130, 40);
+        JButton btnLevantar = estiloBoton("Levantar", new Color(249, 241, 123), 110, 40);
+        btnLevantar.addActionListener(e -> {
+            if (!tamagotchi.estaVivo) {
+                return;//Si el tamagotchi murio no se modificaran sus estados
+            }
+            tamagotchi.levantar();
+            mostrarMensajeTemporal(labelEstado, tamagotchi, "se ha levantado");
+            actualizarImagenTamagotchi(labelImagen, tamagotchi);
+        });
+
+        JButton btnComportamiento = estiloBoton("Especifico", new Color(249, 241, 123), 130, 40);
         btnComportamiento.addActionListener(e -> {
-            tamagotchi.comportamientoEspecifico();
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            if (!tamagotchi.isEstaVivo() || tamagotchi.isEstaDormido()) {
+                return;
+            }
+            String mensaje = tamagotchi.comportamientoEspecifico();
+            mostrarMensajeTemporal(labelEstado, tamagotchi, mensaje);
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
 
-        JButton btnComportamientoDos = estiloBoton("Especifico 2", new Color(255, 200, 150), 130, 40);
+        JButton btnComportamientoDos = estiloBoton("Especifico 2", new Color(249, 241, 123), 130, 40);
         btnComportamientoDos.addActionListener(e -> {
-            tamagotchi.comportamientoEspecificoDos();
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            if (!tamagotchi.isEstaVivo() || tamagotchi.isEstaDormido()) {
+                return;
+            }
+
+            String mensaje = tamagotchi.comportamientoEspecificoDos();
+            mostrarMensajeTemporal(labelEstado, tamagotchi, mensaje);
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
 
-        JButton btnComportamientoTres = estiloBoton("Especifico 3", new Color(255, 200, 150), 130, 40);
+        JButton btnComportamientoTres = estiloBoton("Especifico 3", new Color(249, 241, 123), 130, 40);
         btnComportamientoTres.addActionListener(e -> {
-            tamagotchi.comportamientoEspecificoTres();
-            actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+            if (!tamagotchi.isEstaVivo() || tamagotchi.isEstaDormido()) {
+                return;
+            }
+
+            String mensaje = tamagotchi.comportamientoEspecificoTres();
+            mostrarMensajeTemporal(labelEstado, tamagotchi, mensaje);
             actualizarImagenTamagotchi(labelImagen, tamagotchi);
         });
 
+        //ArrayList poara guardar los botones
+        ArrayList<JButton> listaBotones = new ArrayList<>();
         panelBotones.add(btnAlimentar);
         panelBotones.add(btnJugar);
         panelBotones.add(btnDormir);
+        panelBotones.add(btnLevantar);
         panelBotones.add(btnComportamiento);
         panelBotones.add(btnComportamientoDos);
         panelBotones.add(btnComportamientoTres);
 
-        actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi);
+        //botones guardados en un map
+        botonesTamagotchi.put(tamagotchi, listaBotones);
+
+        actualizarEstadoAnimoDeTamagotchi(labelEstado, tamagotchi, null);
         //Panel que va mostrar estado
         JPanel panelEstado = new JPanel();
         panelEstado.add(labelEstado);
@@ -375,11 +442,12 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
     private void actualizarImagenTamagotchi(JLabel labelImagen, Tamagotchi tamagotchi) {
         try {
+
             String tipo = tamagotchi.getClass().getSimpleName().toLowerCase();
             String estado = tamagotchi.obtenerEstadoAnimo().toLowerCase();
-
             String nombreImagen = determinarNombreImagen(tipo, estado);
 
+            //Se carga la imagen y con setIcon se muestra en el label
             ImageIcon icono = new ImageIcon(getClass().getResource("/imagenes/" + nombreImagen));
             Image imagen = icono.getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH);
             labelImagen.setIcon(new ImageIcon(imagen));
@@ -390,10 +458,14 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
         }
     }
 
-    private void actualizarEstadoAnimoDeTamagotchi(JLabel labelImagen, Tamagotchi tamagotchi) {
+    private void actualizarEstadoAnimoDeTamagotchi(JLabel labelImagen, Tamagotchi tamagotchi, String mensajeExtra) {
         try {
             String estado = tamagotchi.obtenerEstadoAnimo().toLowerCase();
-            labelImagen.setText(estado);
+            if (mensajeExtra != null && !mensajeExtra.isEmpty()) {
+                labelImagen.setText("Estado actual: " + estado + " - " + mensajeExtra);
+            } else {
+                labelImagen.setText("Estado actual: " + estado);
+            }
 
         } catch (Exception e) {
             labelImagen.setText("Texto no encontrado");
@@ -403,6 +475,18 @@ public class SimuladorDeTamagotchiGUI extends JFrame {
 
     private String determinarNombreImagen(String tipo, String estado) {
         return tipo + "_" + estado + ".jpg";
+    }
+
+    
+    //muestra el mensaje temporal dependiendo el comportamiento del tamgotchi
+    private void mostrarMensajeTemporal(JLabel label, Tamagotchi tamagotchi, String mensajeExtra) {
+        //Aqui se gaurdan los mensajes del tamagotchi y manda un bool si hay
+        mensajeTemporalActivo.put(tamagotchi, true);
+        actualizarEstadoAnimoDeTamagotchi(label, tamagotchi, mensajeExtra);
+        //Se mostrara 1.5 segundos para que depsues regrese al estado en el que esta
+        Timer timer = new Timer(1500, e -> actualizarEstadoAnimoDeTamagotchi(label, tamagotchi, null));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     //Metodo para dar color y el texto al boton

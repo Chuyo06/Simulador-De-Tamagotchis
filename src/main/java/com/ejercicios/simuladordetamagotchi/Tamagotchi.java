@@ -8,15 +8,15 @@ package com.ejercicios.simuladordetamagotchi;
  *
  * @author jalex
  */
-abstract class Tamagotchi implements TamagotchiActions{
+abstract class Tamagotchi implements TamagotchiActions {
+
     //Cuando es una clase abstracta los atributos deben ser protegidos
-    protected String nombre ;
-    protected int hambre ;
-    protected int energia ;
-    protected int felicidad ;
+    protected String nombre;
+    protected int hambre;
+    protected int energia;
+    protected int felicidad;
     protected boolean estaDormido;
     protected boolean estaVivo;
-
 
     public Tamagotchi(String nombre) {
         this.nombre = nombre;
@@ -28,15 +28,13 @@ abstract class Tamagotchi implements TamagotchiActions{
     }
 
     //metodos para dormir
-    public void dormir()
-    {
+    public void dormir() {
         this.estaDormido = true;
         //Si se duerme va aumentar 20 en su energia hasta llegar a 100
         this.energia = Math.min(100, this.energia + 20);
     }
 
-    public void levantar()
-    {
+    public void levantar() {
         this.estaDormido = false;
     }
 
@@ -88,9 +86,7 @@ abstract class Tamagotchi implements TamagotchiActions{
         this.estaVivo = estaVivo;
     }
 
-
-    public void iniciarVida()
-    {
+    public void iniciarVida() {
 
     }
 
@@ -103,21 +99,24 @@ abstract class Tamagotchi implements TamagotchiActions{
                     Thread.sleep(5000); //esperar 5 segundos por cada disminucion de accion
 
                     //Modificaciones a su estado solamente si esta despierto el tamgotchi
-                    if (!estaDormido) {
+                    if (estaDormido) {
+                        energia = Math.min(100, energia + 5);
+
+                        //Si el tamagotchi llega a 100 dewberia de levantarse
+                        if (energia >= 100) {
+                            estaDormido = false;
+                        }
+
+                    } else {
                         hambre = Math.max(0, hambre - 5);
                         energia = Math.max(0, energia - 4);
-                        felicidad = Math.max(0, felicidad - 3);
-
-                        // Si se llega a cero en algun estado, se muere
-                        if (hambre == 0 || energia == 0 || felicidad == 0) {
-                            estaVivo = false;
-                            System.out.println(nombre + " ha muerto.");
-                        }
+                        felicidad = Math.max(0, felicidad - 8);
                     }
-
-                    System.out.println("Hambre: "+hambre);
-                    System.out.println("Energia: "+energia);
-                    System.out.println("Felicidad: "+felicidad);
+                    // Si se llega a cero en algun estado, se muere
+                    if (hambre == 0 || energia == 0 || felicidad == 0) {
+                        estaVivo = false;
+                        System.out.println(nombre + " ha muerto.");
+                    }
 
                 } catch (InterruptedException e) {
                     System.out.println("El hilo del tamagotchi " + nombre + " fue interrumpido.");
@@ -127,33 +126,33 @@ abstract class Tamagotchi implements TamagotchiActions{
 
         hilo.start(); //Se inicia el hilo
     }
+
     //Metodo abstracto
-    public abstract  void comportamientoEspecifico();
+    public abstract String comportamientoEspecifico();
 
-    public abstract  void comportamientoEspecificoDos();
+    public abstract String comportamientoEspecificoDos();
 
-    public abstract  void comportamientoEspecificoTres();
+    public abstract String comportamientoEspecificoTres();
 
     public String obtenerEstadoAnimo() {
 
-        if(hambre <= 50 && felicidad >= 40)
-        {
+        if (!estaVivo) {
+            return "muerto";
+        }
+
+        if (hambre <= 50 && felicidad >= 40) {
             return "Hambriento";
         }
 
-        if(felicidad <= 40 && energia >= 30)
-        {
+        if (felicidad <= 80 && energia >= 30) {
             return "Triste";
         }
 
-        if (energia <= 30)
-        {
+        if (energia <= 30) {
             return "Agotado";
         }
-
 
         return "Normal";
     }
 
 }
-
